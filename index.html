@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학교 과제 & 시험 일정 관리 (Taskflow)</title>
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- ================= AUTH VIEW ================= -->
+  <div id="auth-view" class="view-container">
+    <div class="auth-card glass-panel animate-fade-in">
+      <div class="auth-header">
+        <div class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.231-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 13.489v3.087" />
+          </svg>
+          <span>Taskflow</span>
+        </div>
+        <h2>학업 관리 대시보드</h2>
+        <p>과제와 시험 일정을 한눈에 체계적으로 관리하세요</p>
+      </div>
+
+      <!-- Auth Tab Switches -->
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active">로그인</button>
+        <button id="tab-signup" class="auth-tab">회원가입</button>
+      </div>
+
+      <!-- Form error banner -->
+      <div id="auth-error-banner" class="alert-banner hidden"></div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-id">아이디</label>
+          <input type="text" id="login-id" placeholder="아이디를 입력하세요" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="login-pw">비밀번호</label>
+          <input type="password" id="login-pw" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">로그인</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="signup-id">아이디</label>
+          <input type="text" id="signup-id" placeholder="영문, 숫자 4자 이상" required autocomplete="username">
+          <span class="field-hint">영문/숫자 혼용 4~12자</span>
+        </div>
+        <div class="form-group">
+          <label for="signup-pw">비밀번호</label>
+          <input type="password" id="signup-pw" placeholder="6자 이상 입력하세요" required autocomplete="new-password">
+          <span class="field-hint">최소 6자 이상</span>
+        </div>
+        <div class="form-group">
+          <label for="signup-pw-confirm">비밀번호 확인</label>
+          <input type="password" id="signup-pw-confirm" placeholder="비밀번호를 한번 더 입력하세요" required autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">계정 생성하기</button>
+      </form>
+
+      <div class="demo-divider">
+        <span>또는 빠르게 체험해보기</span>
+      </div>
+      <button id="btn-quick-demo" class="btn btn-secondary btn-block">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+        </svg>
+        데모 계정으로 즉시 시작
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================= DASHBOARD VIEW ================= -->
+  <div id="dashboard-view" class="view-container hidden">
+    <!-- Header -->
+    <header class="app-header glass-panel">
+      <div class="header-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-primary">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.231-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0a50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 13.489v3.087" />
+        </svg>
+        <span>Taskflow</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="btn-icon" aria-label="테마 전환">
+          <!-- Sun Icon -->
+          <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 hidden">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M4.22 4.22l1.62 1.62m12.32 12.32l1.62 1.62M3 12h2.25m13.5 0H21M4.22 19.78l1.62-1.62m12.32-12.32l1.62-1.62M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" />
+          </svg>
+          <!-- Moon Icon -->
+          <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+          </svg>
+        </button>
+
+        <div class="user-profile">
+          <span id="user-display-name">학생</span>님
+        </div>
+
+        <button id="btn-logout" class="btn btn-sm btn-secondary">
+          로그아웃
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-layout">
+      <!-- Sidebar Navigation (Desktop) -->
+      <aside class="sidebar glass-panel">
+        <nav class="sidebar-nav">
+          <button data-target="home" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            홈 대시보드
+          </button>
+          <button data-target="calendar" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            캘린더 보기
+          </button>
+          <button data-target="tasks" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+            과제 & 시험 관리
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <button id="btn-seed-data" class="btn btn-sm btn-secondary btn-block">
+            학업 예시 데이터 로드
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Sub-Content View Panel -->
+      <main class="main-content">
+
+        <!-- SUB-VIEW: HOME -->
+        <section id="subview-home" class="sub-view">
+          <div class="dashboard-greeting">
+            <h1>안녕하세요, <span id="dashboard-user-name">학생</span>님!</h1>
+            <p>오늘의 일정과 제출 기한을 확인하세요.</p>
+          </div>
+
+          <!-- Quick Statistics Summary Grid -->
+          <div class="stats-grid">
+            <div class="stat-card glass-panel">
+              <div class="stat-icon icon-blue">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.03 0 1.9.693 2.166 1.638m-7.377 2.24A9.018 9.018 0 0112 15.75c-1.25 0-2.43-.254-3.5-.72m10.138-9.03A9.019 9.019 0 0112 15.75c-1.25 0-2.43-.254-3.5-.72m0 0A8.967 8.967 0 013 18V6c0-1.12.844-2.073 1.957-2.18 1.11-.107 2.23-.16 3.355-.16 1.114 0 2.223.053 3.328.159Z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <h3>남은 과제</h3>
+                <p id="stat-pending-assignments">0개</p>
+              </div>
+            </div>
+            <div class="stat-card glass-panel">
+              <div class="stat-icon icon-purple">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <h3>다가오는 시험</h3>
+                <p id="stat-upcoming-exams">0개</p>
+              </div>
+            </div>
+            <div class="stat-card glass-panel">
+              <div class="stat-icon icon-green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <h3>완료율</h3>
+                <p id="stat-completion-rate">0%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Home Content Grid (Two Column Layout) -->
+          <div class="home-grid">
+            <!-- Left Side: Today's Tasks & Urgent Items -->
+            <div class="home-col">
+              <div class="section-card glass-panel">
+                <div class="section-header">
+                  <h2>오늘 할 일 (Today)</h2>
+                  <span class="badge badge-today" id="today-date-badge">오늘</span>
+                </div>
+                <div id="today-tasks-container" class="task-list">
+                  <!-- Dynamic content (Today's assignments & exams) -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Upcoming Assignments & Exams -->
+            <div class="home-col">
+              <!-- Upcoming Assignments -->
+              <div class="section-card glass-panel">
+                <div class="section-header">
+                  <h2>다가오는 과제</h2>
+                  <select id="filter-assignment-subject" class="select-filter">
+                    <option value="all">모든 과목</option>
+                    <option value="Math">수학</option>
+                    <option value="Science">과학</option>
+                    <option value="English">영어</option>
+                    <option value="History">역사</option>
+                    <option value="Other">기타</option>
+                  </select>
+                </div>
+                <div id="upcoming-assignments-container" class="task-list">
+                  <!-- Dynamic content -->
+                </div>
+              </div>
+
+              <!-- Upcoming Exams -->
+              <div class="section-card glass-panel">
+                <div class="section-header">
+                  <h2>다가오는 시험</h2>
+                </div>
+                <div id="upcoming-exams-container" class="task-list">
+                  <!-- Dynamic content -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- SUB-VIEW: CALENDAR -->
+        <section id="subview-calendar" class="sub-view hidden">
+          <div class="calendar-card glass-panel">
+            <div class="calendar-header-actions">
+              <h2>학업 캘린더</h2>
+              <div class="calendar-nav">
+                <button id="btn-prev-month" class="btn btn-sm btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                  </svg>
+                </button>
+                <span id="calendar-month-year">2026년 6월</span>
+                <button id="btn-next-month" class="btn btn-sm btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Weekdays -->
+            <div class="calendar-weekdays">
+              <div class="weekday sun">일</div>
+              <div class="weekday">월</div>
+              <div class="weekday">화</div>
+              <div class="weekday">수</div>
+              <div class="weekday">목</div>
+              <div class="weekday">금</div>
+              <div class="weekday sat">토</div>
+            </div>
+
+            <!-- Calendar Days Grid -->
+            <div id="calendar-days-grid" class="calendar-grid">
+              <!-- Dynamic days -->
+            </div>
+          </div>
+        </section>
+
+
+        <!-- SUB-VIEW: TASKS MANAGEMENT -->
+        <section id="subview-tasks" class="sub-view hidden">
+          <div class="tasks-action-bar">
+            <h1>과제 & 시험 등록·관리</h1>
+            <div class="action-buttons">
+              <button id="btn-add-assignment" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                새 과제 추가
+              </button>
+              <button id="btn-add-exam" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                새 시험 등록
+              </button>
+            </div>
+          </div>
+
+          <div class="management-panels-grid">
+            <!-- Assignment List Panel -->
+            <div class="management-panel glass-panel">
+              <div class="panel-header">
+                <h2>과제 리스트 (<span id="count-assignments">0</span>)</h2>
+              </div>
+              <div id="manage-assignments-container" class="scroll-list">
+                <!-- Dynamically populated list with Edit/Delete buttons -->
+              </div>
+            </div>
+
+            <!-- Exam List Panel -->
+            <div class="management-panel glass-panel">
+              <div class="panel-header">
+                <h2>시험 일정 리스트 (<span id="count-exams">0</span>)</h2>
+              </div>
+              <div id="manage-exams-container" class="scroll-list">
+                <!-- Dynamically populated list with Edit/Delete buttons -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="mobile-nav-bar glass-panel">
+      <button data-target="home" class="mobile-nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        <span>홈</span>
+      </button>
+      <button data-target="calendar" class="mobile-nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+        </svg>
+        <span>캘린더</span>
+      </button>
+      <button data-target="tasks" class="mobile-nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+        </svg>
+        <span>관리</span>
+      </button>
+    </nav>
+  </div>
+
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- MODAL: ADD / EDIT ASSIGNMENT -->
+  <div id="assignment-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-panel animate-scale-up">
+      <div class="modal-header">
+        <h2 id="assignment-modal-title">새 과제 추가</h2>
+        <button class="btn-close-modal" aria-label="닫기">&times;</button>
+      </div>
+      <div id="assignment-validation-error" class="alert-banner error-banner hidden"></div>
+      <form id="assignment-form">
+        <input type="hidden" id="assignment-id">
+        <div class="form-group">
+          <label for="assignment-subject">과목</label>
+          <select id="assignment-subject" required>
+            <option value="" disabled selected>과목을 선택하세요</option>
+            <option value="Math">수학</option>
+            <option value="Science">과학</option>
+            <option value="English">영어</option>
+            <option value="History">역사</option>
+            <option value="Other">기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="assignment-title">과제 제목</label>
+          <input type="text" id="assignment-title" placeholder="과제 제목을 입력하세요 (예: 미적분 문제풀이)" required max="50">
+        </div>
+        <div class="form-group">
+          <label for="assignment-desc">상세 내용</label>
+          <textarea id="assignment-desc" rows="3" placeholder="과제에 대한 설명을 입력하세요" max="200"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="assignment-due">마감일</label>
+          <input type="date" id="assignment-due" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary btn-close-modal">취소</button>
+          <button type="submit" class="btn btn-primary">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT EXAM -->
+  <div id="exam-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-panel animate-scale-up">
+      <div class="modal-header">
+        <h2 id="exam-modal-title">새 시험 일정 등록</h2>
+        <button class="btn-close-modal" aria-label="닫기">&times;</button>
+      </div>
+      <div id="exam-validation-error" class="alert-banner error-banner hidden"></div>
+      <form id="exam-form">
+        <input type="hidden" id="exam-id">
+        <div class="form-group">
+          <label for="exam-subject">과목</label>
+          <input type="text" id="exam-subject" placeholder="과목을 입력하세요 (예: 과학, 국어)" required max="20">
+        </div>
+        <div class="form-group">
+          <label for="exam-title">시험 이름</label>
+          <input type="text" id="exam-title" placeholder="시험 명칭을 입력하세요 (예: 물리 중간고사)" required max="50">
+        </div>
+        <div class="form-group">
+          <label for="exam-range">시험 범위 / 준비 내용</label>
+          <textarea id="exam-range" rows="3" placeholder="시험 범위나 학습할 내용을 입력하세요" required max="200"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="exam-date">시험 날짜</label>
+          <input type="date" id="exam-date" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary btn-close-modal">취소</button>
+          <button type="submit" class="btn btn-primary">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CALENDAR DAY DETAILS -->
+  <div id="day-details-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-panel animate-scale-up">
+      <div class="modal-header">
+        <h2 id="day-details-title">일정 확인</h2>
+        <button class="btn-close-modal" aria-label="닫기">&times;</button>
+      </div>
+      <div class="day-details-date" id="day-details-subtitle"></div>
+      <div class="day-details-sections">
+        <div class="day-details-section">
+          <h3>제출할 과제</h3>
+          <div id="day-details-assignments" class="day-details-list"></div>
+        </div>
+        <div class="day-details-section">
+          <h3>예정된 시험</h3>
+          <div id="day-details-exams" class="day-details-list"></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary btn-close-modal">확인 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main scripts entry -->
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
